@@ -1,4 +1,4 @@
-/*Creating Sales Table*/
+/* Create the sales table with a composite primary key. */
 
 CREATE TABLE sales (
     order_number INTEGER,
@@ -14,16 +14,19 @@ CREATE TABLE sales (
     PRIMARY KEY (order_number, line_item)
 );
 
-/* verify the table*/
+/* Preview the sales table structure and records.*/
+
 SELECT *
 FROM sales
 LIMIT 5;
 
-/*Verify the import in pgAdmin*/
+/* Verify the total number of imported sales records. */
+
 SELECT COUNT(*) AS total_sales_records
 FROM sales;
 
-/*Duplicate sales records: Every combination of order_number and line_item should be unique.*/
+/* Identify duplicate order_number and line_item combinations.*/
+
 SELECT
     order_number,
     line_item,
@@ -33,16 +36,14 @@ GROUP BY order_number, line_item
 HAVING COUNT(*) > 1;
 
 
-/*Retail Analytics Sales Validation — Missing Delivery Dates.*/
+/* Check the number of sales records with missing delivery dates.*/
+
 SELECT
     COUNT(*) AS total_sales,
     COUNT(*) FILTER (WHERE delivery_date is NULL) AS missing_date
 FROM sales;
 
-/*identify records where:
-- quantity is zero.
-- quantity is negative.
-- quantity is NULL.*/
+/* Identify sales records with zero, negative, or missing quantities.*/
 
 SELECT
     order_number,
@@ -52,7 +53,7 @@ SELECT
 FROM sales
 WHERE quantity <= 0 OR quantity IS NULL;
 
-/*Customer Relationship Validation*/
+/* Identify sales records without a matching customer.*/
 
 SELECT
     s.order_number,
@@ -63,7 +64,7 @@ LEFT JOIN customers c
     ON s.customer_key = c.customer_key
 WHERE c.customer_key IS NULL;
 
-/*Product Relationship Validation*/
+/* Identify sales records without a matching product.*/
 
 SELECT
     s.order_number,

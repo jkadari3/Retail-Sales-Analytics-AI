@@ -1,4 +1,4 @@
-/*Create the Product table */
+/* Create the products table with appropriate data types */
 
 CREATE TABLE products (
     product_key INTEGER PRIMARY KEY,
@@ -17,7 +17,7 @@ SELECT *
 FROM products
 LIMIT 5;
 
-/*Create products_staging bcz CSV contains prices like $6.62, which cannot be imported directly into the NUMERIC columns of products.*/
+/* Create a staging table to import raw product prices stored as text, including currency symbols.*/
 
 CREATE TABLE products_staging (
     product_key TEXT,
@@ -39,16 +39,19 @@ WHERE table_schema = 'public'
 ORDER BY table_name;
 
 
-/*verify products count*/
+/* Verify the number of imported staging records. */
+
 SELECT COUNT(*) AS total_products
 FROM products_staging;
 
-/*original product data, including the dollar signs in the price columns.*/
+/* Original product data, including the dollar signs in the price columns. */
+
 SELECT *
 FROM products_staging
 LIMIT 5;
 
-/*inspect the raw prices */
+/* Inspect the raw prices */
+
 SELECT
     product_key,
     product_name,
@@ -57,9 +60,9 @@ SELECT
 FROM products_staging
 LIMIT 5;
 
-
-/* cleaned prices from Text to Numeric*/
+/* Preview conversion of price fields from text to numeric.*/
 /* This query only previews the transformation. It does not modify either table.*/
+
 SELECT
     product_key,
     product_name,
@@ -84,12 +87,14 @@ SELECT
 FROM products_staging
 LIMIT 5;
 
-/*Check the final table before inserting.output should be zero since table is empty*/
+/*Verify that the destination table is empty before loading. */
 
 SELECT COUNT(*) AS total_products
 FROM products;
 
-/*Insert the cleaned records*/
+/* Load cleaned product records from the staging table.
+   Skip existing product keys to prevent duplicate inserts. */
+
 INSERT INTO products (
     product_key,
     product_name,
@@ -127,13 +132,16 @@ SELECT
     category_key,
     category
 
-FROM products_staging;
+FROM products_staging
+ON CONFLICT (product_key) DO NOTHING;
 
-/*retest the product table , now with data, output 2517*/
+/* Validate the number of records loaded into the products table. */
+
 SELECT COUNT(*) AS total_products
 FROM products;
 
-/*Numeric values without dollar sign in original table*/
+/* Verify that product prices are stored as numeric values. */
+
 SELECT
     product_key,
     product_name,
@@ -142,7 +150,8 @@ SELECT
 FROM products
 LIMIT 5;
 
-/*Find products where the selling price is lower than the cost price.for negative values*/
+/* Identify products with selling prices below unit cost.*/
+
 SELECT
     product_name,
 	unit_cost_usd,
@@ -150,8 +159,7 @@ SELECT
 FROM products
 WHERE unit_price_usd < unit_cost_usd;
 
-/* Using FILTER insted of where(it gives only one result)
-What if we want to check total products, missing costs, and missing prices in one query?*/
+/* Check total records and missing cost or price values using conditional aggregation.*/
 
 SELECT
     COUNT(*) AS total_products,

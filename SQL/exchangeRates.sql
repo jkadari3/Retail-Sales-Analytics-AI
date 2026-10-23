@@ -1,4 +1,6 @@
-/*reate ex-rates table*/
+
+/* Create the exchange_rates table with a composite primary key */
+
 CREATE TABLE exchange_rates (
     exchange_date DATE,
     currency_code VARCHAR(3),
@@ -6,7 +8,9 @@ CREATE TABLE exchange_rates (
     PRIMARY KEY (exchange_date, currency_code)
 );
 
-/*import verification from terminal to pgAdmin*/
+
+/* Verify imported exchange rate records */
+
 SELECT COUNT(*) AS total_exchange_rate_records
 FROM exchange_rates;
 
@@ -16,7 +20,8 @@ ORDER BY exchange_date, currency_code
 LIMIT 10;
 
 
-/* verify the total count and check for invalid values */
+/* Check exchange rate completeness and identify invalid rates */
+
 SELECT
     COUNT(*) AS total_records,
     COUNT(*) FILTER (
@@ -28,9 +33,8 @@ SELECT
 FROM exchange_rates;
 
 
+/* Identify sales records without a matching exchange rate */
 
-/*Validate Sales-to-Exchange-Rates Relationship
-query that identifies sales records without a matching exchange rate.*/
 SELECT
     s.order_number,
     s.line_item,
