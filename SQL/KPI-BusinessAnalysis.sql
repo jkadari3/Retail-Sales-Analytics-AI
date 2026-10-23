@@ -1,10 +1,4 @@
-/*First Business KPI — Total Revenue
-we're moving from data preparation into actual business analysis.
-Business qn: How much total sales revenue did the retailer generate across all recorded transactions?*/
-
-/* s.quantity * p.unit_price_usd	Revenue for one sales line
-SUM(s.quantity)	Total units sold
-SUM(s.quantity * p.unit_price_usd)	Total sales revenue*/
+/* Business question: How much total sales revenue did the retailer generate across all recorded transactions? */
 
 SELECT
     ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS total_revenue_usd
@@ -13,14 +7,12 @@ JOIN products p
     ON s.product_key = p.product_key;
 	
 
-/*Calculate Total Cost and Gross Profit.
-
+/* Calculate Total Cost and Gross Profit.
 how much the products cost the retailer and how much gross profit they generated.
-
 Revenue = Quantity × Selling Price
 Cost = Quantity × Unit Cost
 Gross Profit = Revenue − Cost
-ex: if a product sells for $200 and costs $120, the gross profit per unit is $80*/
+*/
 
 SELECT
     ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS total_revenue_usd,
@@ -85,10 +77,7 @@ JOIN products p
 GROUP BY p.product_name, p.category
 ORDER BY total_revenue_usd DESC LIMIT 10;
 
-/*product_name | category | total_revenue_usd | gross_profit_usd
-
-Req: group at the product level, round the financial values to 2 decimals, 
-and return the Top 10 by gross profit, highest first.*/
+/*product_name | category | total_revenue_usd | gross_profit_usd */
 
 SELECT p.product_name,
        p.category,
@@ -121,7 +110,7 @@ ON s.product_key = p.product_key
 GROUP BY p.product_name, p.category
 ORDER BY units_sold DESC LIMIT 10;
 
-/*Write a query that returns: total_revenue_usd|total_orders|average_order_value 
+/* Write a query that returns: total_revenue_usd|total_orders|average_order_value 
 AOV = Total Revenue ÷ Distinct Number of Orders */
 
 SELECT ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS total_revenue_usd,
@@ -150,9 +139,7 @@ FROM sales s
 JOIN products p
     ON s.product_key = p.product_key;
 
-/*How has revenue changed by year?
-year | total_revenue_usd
-EXTRACT(YEAR FROM s.order_date)->EXTRACT, SUM, GROUP BY, and ORDER BY year.*/
+/* How has revenue changed by year? */
 
 SELECT 
     EXTRACT(YEAR FROM s.order_date) AS annual,
@@ -171,7 +158,8 @@ MAX(s.order_date) as last_order_date
 FROM sales s
 
 
-/*YoY growth step by step*/
+/* YoY growth step by step */
+    
 WITH annual_sales AS (
     SELECT
         EXTRACT(YEAR FROM s.order_date) AS annual,
@@ -184,15 +172,13 @@ WITH annual_sales AS (
 SELECT
     annual,
     ROUND(total_revenue_usd, 2) AS total_revenue_usd,
-    ROUND(
-        LAG(total_revenue_usd) OVER (ORDER BY annual),
-        2
-    ) AS previous_year_revenue
+    ROUND(LAG(total_revenue_usd) OVER (ORDER BY annual),2) AS previous_year_revenue
 FROM annual_sales
 ORDER BY annual;
 
 
-/*YoY Revenue Growth %*/
+/* YoY Revenue Growth % */
+
 WITH annual_sales AS (
     SELECT
         EXTRACT(YEAR FROM s.order_date) AS annual,
@@ -206,10 +192,7 @@ SELECT
     annual,
     ROUND(total_revenue_usd, 2) AS total_revenue_usd,
 
-    ROUND(
-        LAG(total_revenue_usd) OVER (ORDER BY annual),
-        2
-    ) AS previous_year_revenue,
+    ROUND(LAG(total_revenue_usd) OVER (ORDER BY annual),2) AS previous_year_revenue,
 
     ROUND(
         (
@@ -226,7 +209,8 @@ FROM annual_sales
 ORDER BY annual;
 
 
-/*YTD comparison: Jan 1–Feb 20, 2020 vs Jan 1–Feb 20, 2021*/
+/* YTD comparison: Jan 1–Feb 20, 2020 vs Jan 1–Feb 20, 2021 */
+
 SELECT
     EXTRACT(YEAR FROM s.order_date) AS year,
     ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS ytd_revenue_usd
@@ -241,7 +225,8 @@ GROUP BY year
 ORDER BY year;
 
 
-/*How much did YTD revenue change in 2021 compared with the same period in 2020?*/
+/* How much did YTD revenue change in 2021 compared with the same period in 2020? */
+
 WITH ytd_sales AS (
     SELECT
         EXTRACT(YEAR FROM s.order_date) AS year,
@@ -275,7 +260,8 @@ SELECT
 FROM ytd_sales
 ORDER BY year;
 
-/*How did revenue change month by month?*/
+/* How did revenue change month by month? */
+
 SELECT
     DATE_TRUNC('month', s.order_date)::DATE AS month,
     ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS monthly_revenue_usd
@@ -286,8 +272,8 @@ GROUP BY month
 ORDER BY month;
 
 
-/*Which countries generate the most revenue and gross profit?*/
-/*o/p:country | total_revenue_usd | gross_profit_usd*/
+/* Which countries generate the most revenue and gross profit? */
+
 SELECT st.country, 
        ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS total_revenue_usd,
        ROUND(SUM(s.quantity * (p.unit_price_usd - p.unit_cost_usd)), 2) AS gross_profit_usd
@@ -300,7 +286,8 @@ WHERE s.store_key>0
 GROUP BY st.country
 ORDER BY total_revenue_usd desc;/*it shows online in output, so do below*/
 
-/*Sales-channel wise*/
+/* Sales-channel wise */
+
 Select 
 CASE
     WHEN s.store_key = 0 THEN 'Online'
@@ -311,7 +298,7 @@ ROUND(SUM(s.quantity * p.unit_price_usd), 2) AS total_revenue_usd,
 FROM sales s
 JOIN products p
 ON s.product_key = p.product_key
-Group by sales_channel
+GROUP BY sales_channel
 ORDER BY total_revenue_usd desc;
 
 
