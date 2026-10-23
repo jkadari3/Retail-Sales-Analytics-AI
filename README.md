@@ -23,6 +23,11 @@ The analysis uses the Global Electronics Retailer dataset, which includes:
 
 The final analysis contains **62,884 sales records**.
 
+**Dataset Source:** [Global Electronics Retailer — Maven Analytics](https://mavenanalytics.io/data-playground/global-electronics-retailer)
+
+**Original Data Source:** Microsoft  
+**License:** Public Domain
+
 ### Overall Business KPIs
 
 | KPI | Value |
