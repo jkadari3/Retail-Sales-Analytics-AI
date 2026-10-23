@@ -91,36 +91,6 @@ Answer: {{"metric": "revenue", "year": 2019, "category": "Computers", "channel":
     )
 
     return f"Revenue: ${revenue:,.2f}"
-    result = json.loads(response["message"]["content"])
-    st.write("AI interpretation:", result)
-
-    if result.get("channel") in ["null", "None", ""]:
-        result["channel"] = None
-
-    valid_categories = df["Category"].dropna().unique()
-
-    if result.get("category") is not None:
-        if result["category"] not in valid_categories:
-            return "Sorry, I could not identify a valid product category."
-
-    valid_channels = ["Online", "Physical Store"]
-
-    if result.get("channel") is not None:
-        if result["channel"] not in valid_channels:
-            return "Sorry, I could not identify a valid sales channel."
-
-    if result.get("metric", "").lower() != "revenue":
-        return "Currently, I can answer revenue questions only."
-
-    revenue = calculate_revenue(
-        df,
-        year=int(result["year"]) if result.get("year") else None,
-        category=result.get("category"),
-        channel=result.get("channel")
-    )
-
-    return f"Revenue: ${revenue:,.2f}"    
-
 st.title("Retail Sales AI Assistant")
 
 st.write("Ask questions about retail sales revenue.")
