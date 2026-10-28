@@ -25,9 +25,6 @@ The final analysis contains **62,884 sales records**.
 
 **Dataset Source:** [Global Electronics Retailer — Maven Analytics](https://mavenanalytics.io/data-playground/global-electronics-retailer)
 
-**Original Data Source:** Microsoft  
-**License:** Public Domain
-
 ### Overall Business KPIs
 
 | KPI | Value |
@@ -88,7 +85,34 @@ Built an interactive Retail Sales Performance Dashboard to present business KPIs
 
 Developed a local AI Assistant that interprets natural-language revenue questions and returns calculated results from the retail dataset.
 
-## Key Business Insights
+### Key Business Insights
+
+## Data Validation and Accuracy
+
+Data quality and calculation accuracy were important parts of this project.
+
+Validation included:
+
+- Checking duplicate sales records and invalid quantities.
+- Verifying relationships between sales, customers, products, and stores.
+- Checking exchange-rate matches.
+- Comparing revenue, cost, and gross profit calculations against SQL analysis.
+- Testing the AI Assistant with different combinations of year, category, and sales-channel filters.
+
+### AI Assistant Validation Results
+
+| Business Question | Validated Revenue |
+|---|---:|
+| Total revenue across all years | $55,755,479.59 |
+| Total revenue in 2020 | $9,294,632.14 |
+| Computers revenue in 2019 | $6,958,430.89 |
+| Online Computers revenue in 2019 | $1,500,897.15 |
+| Physical Store Computers revenue in 2019 | $5,457,533.74 |
+| Online revenue in 2020 | $2,069,950.90 |
+
+All six test questions returned the expected results in the Streamlit application.
+
+The assistant is a validated local prototype supporting revenue-related questions, rather than a production-ready analytics system.
 
 ### Overall Sales Performance
 
@@ -103,10 +127,7 @@ The retail business generated approximately **$55.76 million in revenue** and **
 
 ### Product Profitability
 
-The **WWI Desktop PC2.33 X2330 Black** was the highest gross-profit product identified in the analysis.
-
-- Revenue: $505,450
-- Gross Profit: $337,986
+The **WWI Desktop PC2.33 X2330 Black** was identified as the highest gross-profit product in the SQL analysis, generating approximately **$505,450 in gross profit**.
 
 Desktop computers appeared frequently among the most profitable products, highlighting the importance of the Computers category to overall business performance.
 
@@ -125,6 +146,14 @@ These are recommendations based on the analysis, not measured business improveme
 
 Created an interactive **Retail Sales Performance Dashboard** using Tableau.
 
+### Live Interactive Dashboard
+
+[View Retail Sales Performance Dashboard on Tableau Public](https://public.tableau.com/app/profile/jyothi.kadari/viz/RetailSalesAnalyticsRevenueProfitabilitySalesChannels/RetailSalesPerformanceDashboard)
+
+### Dashboard Preview
+
+![Retail Sales Performance Dashboard](images/tableau_dashboard.png)
+
 The dashboard helps users explore:
 
 - Overall revenue and profitability
@@ -141,15 +170,22 @@ As an extension of the analytics project, I built a simple AI Assistant using Py
 
 The goal was to make revenue information easier to access by allowing users to ask questions in everyday language instead of writing SQL queries.
 
+### AI Assistant Preview
+
+![Retail Sales AI Assistant](images/ai_assistant.png)
+
 ### How It Works
 
 1. A user enters a revenue-related question in the Streamlit application.
-2. The Ollama language model interprets the question and extracts the metric, year, product category, and sales channel.
-3. Python validates the extracted information against the supported metrics and filters.
-4. Pandas filters the retail dataset and calculates revenue.
-5. Streamlit displays the calculated result.
+2. Ollama interprets the question and extracts structured information, including the metric, year, and product category.
+3. Python determines the sales channel directly from the user's question to prevent incorrect AI-generated channel filters.
+4. Python validates the supported metric and extracted filters.
+5. Pandas filters the retail dataset and calculates revenue.
+6. Streamlit displays the calculated result.
 
-The AI model is responsible for interpreting the question. The actual revenue calculation is performed using Python and Pandas.
+The language model helps interpret business questions, while Python and Pandas handle filtering and financial calculations.
+
+This separation improves reliability and makes the results easier to validate.
 
 ### Example Questions
 
